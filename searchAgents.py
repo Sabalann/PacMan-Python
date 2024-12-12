@@ -300,7 +300,6 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
-        # Start with the initial position and no corners visited
         return (self.startingPosition, tuple())
         util.raiseNotDefined()
 
@@ -309,10 +308,8 @@ class CornersProblem(search.SearchProblem):
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
-        # Unpack the state
         position, visited_corners = state
         
-        # Check if all corners have been visited
         return len(visited_corners) == 4
         util.raiseNotDefined()
 
@@ -328,27 +325,20 @@ class CornersProblem(search.SearchProblem):
         """
 
         successors = []
-        # Unpack the current state
         currentPosition, visitedCorners = state
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
-            # Compute the next position
             x, y = currentPosition
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
             
-            # Check if the next position hits a wall
             if not self.walls[nextx][nexty]:
-                # Create a new list of visited corners
                 newVisitedCorners = list(visitedCorners)
                 
-                # Check if the new position is a corner that hasn't been visited
                 if (nextx, nexty) in self.corners and (nextx, nexty) not in visitedCorners:
                     newVisitedCorners.append((nextx, nexty))
                 
-                # Create the successor state
                 successor = ((nextx, nexty), tuple(newVisitedCorners))
                 
-                # Add to successors list (successor, action, cost)
                 successors.append((successor, action, 1))
         
         self._expanded += 1 # DO NOT CHANGE
@@ -372,26 +362,20 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
     current_pos, corners_visited = state
     corners = problem.corners
     
-    # If all corners are visited, return 0
     if len(corners_visited) == 4:
         return 0
     
-    # Find unvisited corners
     unvisited_corners = [corner for corner in corners if corner not in corners_visited]
     
-    # Compute the total minimum distances
     total_distance = 0
     current = current_pos
     
     while unvisited_corners:
-        # Find the closest unvisited corner
         closest_corner = min(unvisited_corners, 
                               key=lambda corner: manhattan_distance(current, corner))
         
-        # Add distance to this corner
         total_distance += manhattan_distance(current, closest_corner)
         
-        # Update current position and remove the visited corner
         current = closest_corner
         unvisited_corners.remove(closest_corner)
     
