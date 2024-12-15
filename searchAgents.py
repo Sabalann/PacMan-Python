@@ -292,7 +292,7 @@ class CornersProblem(search.SearchProblem):
         # Please add any code here which you would like to use
         # in initializing the problem
         "*** YOUR CODE HERE ***"
-        self.cornersVisited = set()
+        self.cornersVisited = set()  # Which corners have been visited
 
     def getStartState(self):
         """
@@ -300,7 +300,7 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
-        return (self.startingPosition, tuple())
+        return (self.startingPosition, tuple()) # Start with the initial position and none of the corners visited
         util.raiseNotDefined()
 
     def isGoalState(self, state: Any):
@@ -308,9 +308,9 @@ class CornersProblem(search.SearchProblem):
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
-        position, visited_corners = state
+        position, visited_corners = state  # Unpack the state
         
-        return len(visited_corners) == 4
+        return len(visited_corners) == 4  # Check if it went to all 4 corners
         util.raiseNotDefined()
 
     def getSuccessors(self, state: Any):
@@ -325,12 +325,17 @@ class CornersProblem(search.SearchProblem):
         """
 
         successors = []
+        # Unpack the current state
         currentPosition, visitedCorners = state
+        
+        # Try all four directions
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
+            # Compute the next position
             x, y = currentPosition
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
             
+            # Check if the next position is hitting a wall
             if not self.walls[nextx][nexty]:
                 newVisitedCorners = list(visitedCorners)
                 
@@ -359,29 +364,34 @@ class CornersProblem(search.SearchProblem):
 
 
 def cornersHeuristic(state: Any, problem: CornersProblem):
+    # Unpack the current state
     current_pos, corners_visited = state
     corners = problem.corners
     
+    # If all corners are visited, return 0
     if len(corners_visited) == 4:
         return 0
     
+    # Find unvisited corners
     unvisited_corners = [corner for corner in corners if corner not in corners_visited]
     
     total_distance = 0
     current = current_pos
     
+    # Continue until all unvisited corners have been processed
     while unvisited_corners:
         closest_corner = min(unvisited_corners, 
-                              key=lambda corner: manhattan_distance(current, corner))
+                              key=lambda corner: grid_distance(current, corner))
         
-        total_distance += manhattan_distance(current, closest_corner)
+        total_distance += grid_distance(current, closest_corner)
         
         current = closest_corner
         unvisited_corners.remove(closest_corner)
     
     return total_distance
 
-def manhattan_distance(pos1, pos2):
+# helper to calculate distance in a grid system
+def grid_distance(pos1, pos2):
     return abs(pos1[0] - pos2[0]) + abs(pos1[1] - pos2[1])
 
 class AStarCornersAgent(SearchAgent):
