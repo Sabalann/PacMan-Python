@@ -300,7 +300,7 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
-        return (self.startingPosition, self.corners) # Start with the initial position and none of the corners visited
+        return (self.startingPosition, ()) # Start with the initial position and none of the corners visited
         util.raiseNotDefined()
 
     def isGoalState(self, state: Any):
@@ -310,10 +310,7 @@ class CornersProblem(search.SearchProblem):
         "*** YOUR CODE HERE ***"
         position, visited_corners = state  # Unpack the state
         
-        if len(visited_corners) == 0:
-            return True
-        else:
-            return False  # Check if it went to all 4 corners
+        return len(visited_corners) == 4
         util.raiseNotDefined()
 
     def getSuccessors(self, state: Any):
