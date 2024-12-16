@@ -486,7 +486,23 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
-    return 0
+    pellets = foodGrid.asList()
+
+    # If there are no food pellets left, we reached the goal state, so the heuristic is 0
+    if not pellets:
+        return 0
+    
+    # Initialize the heuristic to 0
+    furthestDist = 0
+    
+    # Loop over all pellets and find the furthest pellet
+    for pellet in pellets:
+        dist = mazeDistance(position, pellet, problem.startingGameState)
+        if (dist > furthestDist):
+            furthestDist = dist
+
+    # Return the furthest distance as the heuristic
+    return furthestDist
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
