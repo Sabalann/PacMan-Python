@@ -300,7 +300,7 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
-        return (self.startingPosition, tuple()) # Start with the initial position and none of the corners visited
+        return (self.startingPosition, self.corners) # Start with the initial position and none of the corners visited
         util.raiseNotDefined()
 
     def isGoalState(self, state: Any):
@@ -310,7 +310,10 @@ class CornersProblem(search.SearchProblem):
         "*** YOUR CODE HERE ***"
         position, visited_corners = state  # Unpack the state
         
-        return len(visited_corners) == 4  # Check if it went to all 4 corners
+        if len(visited_corners) == 0:
+            return True
+        else:
+            return False  # Check if it went to all 4 corners
         util.raiseNotDefined()
 
     def getSuccessors(self, state: Any):
@@ -486,7 +489,23 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
-    return 0
+    pellets = foodGrid.asList()
+
+    # If there are no food pellets left, we reached the goal state, so the heuristic is 0
+    if not pellets:
+        return 0
+    
+    # Initialize the heuristic to 0
+    furthestDist = 0
+    
+    # Loop over all pellets and find the furthest pellet
+    for pellet in pellets:
+        dist = mazeDistance(position, pellet, problem.startingGameState)
+        if (dist > furthestDist):
+            furthestDist = dist
+
+    # Return the furthest distance as the heuristic
+    return furthestDist
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
@@ -517,7 +536,9 @@ class ClosestDotSearchAgent(SearchAgent):
         problem = AnyFoodSearchProblem(gameState)
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        #use _ to find closest dot
+        from search import aStarSearch
+        return aStarSearch(problem)
 
 class AnyFoodSearchProblem(PositionSearchProblem):
     """
@@ -553,7 +574,7 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         x,y = state
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return (x,y) in self.food.asList()  #checks if the position of pacman is in the list of food positions
 
 def mazeDistance(point1: Tuple[int, int], point2: Tuple[int, int], gameState: pacman.GameState) -> int:
     """
